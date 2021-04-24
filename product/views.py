@@ -1,13 +1,16 @@
 import json
 from operator import itemgetter
 
-from django.shortcuts   import render
-from django.http        import HttpResponse, JsonResponse
-from django.views       import View
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.views import View
 
-from product.models     import Product
+from rest_framework.views import APIView
 
-class ProductView(View):
+from product.models import Product
+
+
+class ProductView(APIView):
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'message': 'PRODUCT_NOT_EXIST'}, status=404)

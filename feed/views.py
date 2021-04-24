@@ -1,15 +1,21 @@
-import json, jwt
-from json.decoder       import JSONDecodeError
+import json
+import jwt
+from json.decoder import JSONDecodeError
 
-from django.views       import View
-from django.http        import JsonResponse
+from django.views import View
+from django.http import JsonResponse
 
-from user.utils         import login_decorator, get_current_user_id
-from user.models        import User
-from feed.models        import Feed, ImageUrl, Comment
-from product.models     import Product, ProductImageUrl
+from rest_framework.views import APIView
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
-class FeedView(View):
+from user.utils import login_decorator, get_current_user_id
+from user.models import User
+from feed.models import Feed, ImageUrl, Comment
+from product.models import Product, ProductImageUrl
+
+
+class FeedView(APIView):
     def get(self, request):
         try:
             MAXIMUM_COMMENT = 2
@@ -65,7 +71,8 @@ class FeedView(View):
         except User.DoesNotExist:
             return JsonResponse({'MESSAGE' : 'INVALID_USER'}, status=404)
 
-class FeedDetailView(View):
+
+class FeedDetailView(APIView):
     def get(self, request, feed_id):
         try:
             feed_data   = Feed.objects.get(id=feed_id)
@@ -116,6 +123,7 @@ class FeedDetailView(View):
                 'feed_image_data'   : [{'url' : item.image_url} for item in feed_data.imageurl_set.all()],
             }, status=200)
 
+        # 
         except ValueError:
             return JsonResponse({'MESSAGE' : 'INVALID_VALUE_TYPE'}, status=400)
 
@@ -128,6 +136,16 @@ class FeedDetailView(View):
         except Product.DoesNotExist:
             return JsonResponse({'MESSAGE' : 'INVALID_PRODUCT_ID'}, status=404)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['description'],
+            properties={
+                'description': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+        ),
+        operation_description='update the feed with the new description'
+    )
     @login_decorator
     def patch(self, request, feed_id):
         try:
