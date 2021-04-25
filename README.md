@@ -20,6 +20,8 @@
 - models.py에 맞게 ERD 수정.
 2. 4/24
 - [drf-yasg](https://github.com/axnsan12/drf-yasg)를 사용해 API 문서화 시도.
+3. 4.25
+- [drf-yasg](https://github.com/axnsan12/drf-yasg)를 사용해 Swagger UI 기반 기존 API 문서화 완료. 엔드포인트 '/swagger'
 
 ## Reference
 > 이 프로젝트는 스타일쉐어 사이트를 참조하여 학습목적으로 만들었습니다.  
