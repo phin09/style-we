@@ -12,6 +12,7 @@ django-countries==7.0
 djangorestframework==3.12.4
 drf-yasg==1.20.0
 flex==6.14.1
+gunicorn==20.1.0
 idna==2.10
 inflection==0.5.1
 itypes==1.2.0
@@ -34,4 +35,5 @@ sqlparse==0.4.1
 strict-rfc3339==0.7
 uritemplate==3.0.1
 urllib3==1.26.4
+uWSGI @ file:///home/conda/feedstock_root/build_artifacts/uwsgi_1602758936018/work
 validate-email==1.3
