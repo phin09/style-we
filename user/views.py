@@ -1,14 +1,32 @@
-import json, bcrypt, jwt
+import json
+import bcrypt
+import jwt
 
-from django.shortcuts   import render
-from django.views       import View
-from django.http        import JsonResponse, HttpResponse
+from django.shortcuts import render
+from django.views import View
+from django.http import JsonResponse, HttpResponse
 
-from my_settings        import SECRET_KEY,ALGORITHM
-from user.models        import User
-from user.utils         import login_decorator
+from rest_framework.views import APIView
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
-class SignInView(View):
+from my_settings import SECRET_KEY,ALGORITHM
+from user.models import User
+from user.utils import login_decorator
+
+
+class SignInView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['user_name', 'password'],
+            properties={
+                'user_name': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        operation_description='sign in with existing username and password'
+    )
     def post(self, request):
         data = json.loads(request.body)
         
@@ -34,7 +52,20 @@ PASSWORD_MIN_LENGTH     = 6
 USER_NAME_MIN_LENGTH    = 3
 USER_NAME_MAX_LENGTH    = 32
 
-class UserView(View):
+class UserView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['user_name', 'password', 'nickname', 'email'],
+            properties={
+                'user_name': openapi.Schema(type=openapi.TYPE_STRING),
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+                'nickname': openapi.Schema(type=openapi.TYPE_STRING),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+            },
+        ),
+        operation_description='sign up to make a new account'
+    )
     def post(self, request):
         data = json.loads(request.body)
         
@@ -70,6 +101,18 @@ class UserView(View):
         except KeyError:
             return JsonResponse({'MESSAGE':'INVALID_KEYS'}, status=400)
     
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['birth', 'website', 'about'],
+            properties={
+                'birth': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE),
+                'website': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_URI),
+                'about': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+        operation_description='sign up to make a new account'
+    )
     @login_decorator
     def patch(self, request):
         print(request)
